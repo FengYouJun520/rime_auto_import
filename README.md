@@ -1,0 +1,2 @@
+# rime_auto_import
+自动从git导入小鹤双拼的自定义词库到Rime中
