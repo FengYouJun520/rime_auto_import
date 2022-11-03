@@ -1,2 +1,0 @@
-# 介绍
-`rime_auto_import`是一个自动从git仓库的flypy_user.txt文件导入用户自定义词库到Rime项目
