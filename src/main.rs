@@ -7,6 +7,7 @@ use tokio::{
     io::{self, AsyncWriteExt},
 };
 
+const RIME_DIR: &str = "Rime";
 const FILE_NAME: &str = "flypy_user.txt";
 const BACK_FILE: &str = "flypy_user.txt.back";
 const GIT_FILE_URL: &str = "https://github.com/FengYouJun520/flypy_user/blob/main/flypy_user.txt";
@@ -33,8 +34,14 @@ impl Display for UserDict {
 #[command(author, version, about, long_about = None)]
 struct Config {
     /// 用户的配置目录
-    #[arg(short, long = "config", value_name = "PATH")]
-    config_dir: Option<PathBuf>,
+    ///
+    /// |Platform | Value                                 | Example                                  |
+    /// | ------- | ------------------------------------- | ---------------------------------------- |
+    /// | Linux   | `$XDG_CONFIG_HOME` or `$HOME`/.config | /home/alice/.config                      |
+    /// | macOS   | `$HOME`/Library/Application Support   | /Users/Alice/Library/Application Support |
+    /// | Windows | `{FOLDERID_RoamingAppData}`           | C:\Users\Alice\AppData\Roaming  
+    #[arg(short, long, value_name = "PATH")]
+    dir: Option<PathBuf>,
     /// git仓库的flypy_user.txt路径
     git_url: String,
 }
@@ -42,12 +49,12 @@ struct Config {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let config = Config::parse();
-    let mut config_dir = if let Some(ref dir) = config.config_dir {
-        dir.clone()
+    let mut config_dir = if let Some(dir) = config.dir {
+        dir
     } else {
         dirs::config_dir().unwrap()
     };
-    config_dir.push("Rime");
+    config_dir.push(RIME_DIR);
 
     let resp = reqwest::get(&config.git_url).await?;
     if resp.status() != 200 {
