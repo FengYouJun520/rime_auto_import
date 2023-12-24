@@ -58,8 +58,8 @@ async fn main() -> anyhow::Result<()> {
 
     let resp = reqwest::get(&config.git_url).await?;
     if resp.status() != 200 {
-        println!("请求失败: {}，请检查路径是否正确", config.git_url);
-        println!("例如: {}", GIT_FILE_URL);
+        eprintln!("请求失败: {}，请检查路径是否正确", config.git_url);
+        eprintln!("例如: {}", GIT_FILE_URL);
         std::process::exit(1);
     }
 
